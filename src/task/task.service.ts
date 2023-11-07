@@ -1,11 +1,21 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { TaskEntity } from './entities/task.entity'
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class TaskService {
-  create(createTaskDto: CreateTaskDto) {
-    return 'This action adds a new task';
+  constructor(@InjectRepository(TaskEntity)
+  private readonly taskRepository: Repository<TaskEntity>
+  ){}
+  async create(data: CreateTaskDto) {
+    try {
+      const task = await this.taskRepository.save(data)
+    } catch (error) {
+      throw new HttpException({message: 'Tarefa não pode ser criada'}, HttpStatus.BAD_REQUEST)
+    }
   }
 
   findAll() {
