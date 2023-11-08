@@ -12,25 +12,51 @@ export class TaskService {
   ){}
   async create(data: CreateTaskDto) {
     try {
-      const task = await this.taskRepository.save(data)
+      const task = await this.taskRepository.save(data);
     } catch (error) {
-      throw new HttpException({message: 'Tarefa não pode ser criada'}, HttpStatus.BAD_REQUEST)
+      throw new HttpException({message: 'Tarefa não pode ser criada'}, HttpStatus.BAD_REQUEST);
     }
   }
 
-  findAll() {
-    return `This action returns all task`;
+  async findAll() {
+    try {
+      const task = await this.taskRepository.find();
+      return task;
+    } catch (error) {
+      throw new HttpException({message: 'Dados não encontrados'}, HttpStatus.NOT_FOUND);
+    }
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} task`;
+  async findOne(id: number) {
+    try {
+      return await this.taskRepository.findOne({
+        where: {id}
+      });
+    } catch (error) {
+      throw new HttpException({message: 'Dados não encontrados'}, HttpStatus.NOT_FOUND);
+    }
   }
 
-  update(id: number, updateTaskDto: UpdateTaskDto) {
-    return `This action updates a #${id} task`;
+  async update(id: number, updateTaskDto: UpdateTaskDto) {
+    try {
+      const entity = Object.assign(new TaskEntity(), updateTaskDto);
+      await this.taskRepository.save({
+        ...entity,
+        id,
+      });
+      const task = await this.taskRepository.findOne({where : {id}});
+      return {task, message: 'Task atualizada com sucesso'};
+    } catch (error) {
+      throw new HttpException({message: 'Dados não forem atualizados'}, HttpStatus.BAD_REQUEST);
+    }
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} task`;
+  async delete(id: number) {
+    try {
+      await this.taskRepository.softDelete(id);
+      return {message: 'Task deletada com sucesso'}
+    } catch (error) {
+      throw new HttpException({message: 'Não foi possível deletar a task'}, HttpStatus.BAD_REQUEST);
+    }
   }
 }
