@@ -1,37 +1,31 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
-
-export enum Status {
-    ACTIVE = "active",
-    PENDING = "pending",
-    CLOSE = "close",
-    CANCEL = "cancel"
-}
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { UserEntity } from '../../user/entities/user.entity';
+import { taskEnum } from '../interfaces/task.enum';
 
 @Entity()
-export class Task {
-    @PrimaryGeneratedColumn()
-    id: number;
+export class TaskEntity {
+  @PrimaryGeneratedColumn()
+  id: number;
 
-    @Column()
-    title: string;
+  @Column()
+  title: string;
 
-    @Column()
-    description: string;
+  @Column()
+  description: string;
 
-    @Column()
-    due_date: Date;
+  @Column()
+  due_date: Date;
 
-    @Column()
-    priority: number;
+  @Column()
+  priority: number;
 
-    @Column({
-        type: "enum",
-        enum: Status,
-        default: Status.ACTIVE
-    })
-    status: Status;
+  @Column({
+    type: 'enum',
+    enum: taskEnum,
+    default: taskEnum.ACTIVE,
+  })
+  status: taskEnum;
 
-    @Column()
-    user: string;
-
+  @ManyToOne(() => UserEntity, (user) => user.tasksData, { cascade: true })
+  user_id: UserEntity;
 }

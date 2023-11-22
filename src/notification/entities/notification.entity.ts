@@ -1,16 +1,20 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { UserEntity } from '../../user/entities/user.entity';
 
 @Entity()
-export class Notification {
-    @PrimaryGeneratedColumn()
-    id: number;
+export class NotificationEntity {
+  @PrimaryGeneratedColumn()
+  id: number;
 
-    @Column()
-    message: string;
+  @Column()
+  message: string;
 
-    @Column()
-    date_time: Date;
+  @Column()
+  date_time: Date;
 
-    @Column()
-    Recipient: string;
+  @Column()
+  Recipient: string;
+
+  @ManyToOne(() => UserEntity, (user) => user.notifications, { cascade: true })
+  user_id: UserEntity;
 }

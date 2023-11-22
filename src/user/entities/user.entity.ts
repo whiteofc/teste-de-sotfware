@@ -1,24 +1,24 @@
-import { ColdObservable } from "rxjs/internal/testing/ColdObservable";
-import { Task } from "src/task/entities/task.entity";
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { NotificationEntity } from '../../notification/entities/notification.entity';
+import { TaskEntity } from '../../task/entities/task.entity';
 
 @Entity()
-export class User {
-    @PrimaryGeneratedColumn()
-    id: number;
+export class UserEntity {
+  @PrimaryGeneratedColumn()
+  id: number;
 
-    @Column()
-    name: string;
+  @Column()
+  name: string;
 
-    @Column()
-    email: string;
+  @Column()
+  email: string;
 
-    @Column()
-    password: string;
+  @Column()
+  password: string;
 
-    @Column()
-    tasks: Task;
+  @OneToMany(() => TaskEntity, (task) => task.user_id)
+  tasksData: TaskEntity[];
 
-    @Column()
-    notification: Notification;
+  @OneToMany(() => NotificationEntity, (Notification) => Notification.user_id)
+  notifications: Notification[];
 }
